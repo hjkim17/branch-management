@@ -155,5 +155,7 @@ def monitor_once():
 	return
 
 if __name__ == "__main__":
+	print("branch manager mointoring...")
 	load_config()
 	monitor_once()
+	print("branch manager mointoring end.")
