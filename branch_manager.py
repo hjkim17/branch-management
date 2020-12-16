@@ -13,7 +13,10 @@ def load_config():
 		config = json.load(config_file)
 	config['github_api_baseurl'] = "https://"+config['github_api_user']+":"+config['github_api_token']+"@"+"api.github.com"
 	return
-#################################################################
+
+def load_author_ignore():
+	# TODO: author bypass from load author_ignore.txt
+	return
 def load_basebranch():
 	branches = set()
 	f = open("branch_base.txt", "r")
@@ -26,8 +29,9 @@ def load_basebranch():
 	f.close()
 	return branches
 def save_basebranch():
+	# TODO: save newly accepted branch name to branch_base.txt
 	return
-#################################################################
+
 def get_branch_jsons():
 	res = ""
 	idx = 1
