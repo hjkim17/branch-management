@@ -36,8 +36,10 @@ def load_basebranch():
 		branches.add(line)
 	f.close()
 	return branches
-def save_basebranch():
-	# TODO: save newly accepted branch name to branch_base.txt
+def append_to_basebranch(branch_name):
+	#  append newly accepted branch name to branch_base.txt
+	with open("branch_base.txt", "a") as f:
+		print(branch_name, file=f)
 	return
 
 def get_branch_jsons():
@@ -76,27 +78,30 @@ def find_unmatched_branch_names(branch_names):
 	new_branch_names = branch_names - base_branch_names
 
 	unmatched_branch_names = set()
-	for branch_names in new_branch_names:
-		branch_elements = branch_names.split('/')
+	for branch_name in new_branch_names:
+		branch_elements = branch_name.split('/')
 
 		length = len(branch_elements)
 		if length < 1 or length > 3:
 			# error case
-			unmatched_branch_names.add(branch_names)
+			unmatched_branch_names.add(branch_name)
 			continue
-		if length == 1 and (branch_names == "master" or branch_names == "develop"):
+		if length == 1 and (branch_name == "master" or branch_name == "develop"):
 			continue
 		if not ((length == 2 and (branch_elements[0] == "hotfix" or branch_elements[0] == "issue")) or (length == 3 and branch_elements[0] == "feature")):
 			# error case
-			unmatched_branch_names.add(branch_names)
+			unmatched_branch_names.add(branch_name)
 			continue
 		if not branch_elements[1].isdigit():
 			# error case
-			unmatched_branch_names.add(branch_names)
+			unmatched_branch_names.add(branch_name)
 			continue
 		branch_issue_number = int(branch_elements[1])
 		if not has_assigned_issue(branch_issue_number):
-			unmatched_branch_names.add(branch_names)
+			unmatched_branch_names.add(branch_name)
+		else:
+			# for fast lookup on next monitoring, just bypass github api call for this branch
+			append_to_basebranch(branch_name)
 	return unmatched_branch_names
 
 def make_email_branch_info_set(source_branch_jsons, target_unmatched_branches):
