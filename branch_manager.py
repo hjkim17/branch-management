@@ -15,8 +15,16 @@ def load_config():
 	return
 
 def load_author_ignore():
-	# TODO: author bypass from load author_ignore.txt
-	return
+	author_ignores = set()
+	f = open("author_ignore.txt", "r")
+	lines = f.readlines()
+	for line in lines:
+		line = line.strip()
+		if line == "":
+			continue
+		author_ignores.add(line)
+	f.close()
+	return author_ignores
 def load_basebranch():
 	branches = set()
 	f = open("branch_base.txt", "r")
@@ -150,7 +158,11 @@ def monitor_once():
 
 	email_branch_info_set = make_email_branch_info_set(branch_jsons, unmatched_branch_names)
 
+	author_ignores_to_mail = load_author_ignore()
 	for key, value in email_branch_info_set.items():
+		if key in author_ignores_to_mail:
+			print("Author "+key+" make branches with wrong naming, but ignored by author_ignore.txt")
+			continue
 		send_unmatched_branch_mail(key, value)
 	return
 
